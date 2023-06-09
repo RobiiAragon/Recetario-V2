@@ -1,11 +1,10 @@
-import tkinter
-import customtkinter
 import tkinter as tk
 from tkinter import messagebox
 import subprocess
+import customtkinter
 
 # Modes: system (default), light, dark
-customtkinter.set_appearance_mode("System")
+customtkinter.set_appearance_mode("dark")
 # Themes: blue (default), dark-blue, green
 customtkinter.set_default_color_theme("blue")
 
@@ -15,7 +14,6 @@ def iniciar_sesion():
     usuarios_registrados = {"Aragon": "jala1975", "Invitado": "invitadoamespa"}
 
     def verificar_credenciales():
-
         usuario = entry_usuario.get()
         contraseña = entry_contraseña.get()
 
@@ -43,7 +41,8 @@ def iniciar_sesion():
     entry_contraseña = tk.Entry(root, show="*")
     entry_contraseña.pack()
 
-    button_iniciar_sesion = tk.Button(
+    # Utilizar CTkButton en lugar de Button
+    button_iniciar_sesion = customtkinter.CTkButton(
         root, text="Iniciar Sesión", command=verificar_credenciales)
     button_iniciar_sesion.pack()
 
@@ -52,7 +51,7 @@ def iniciar_sesion():
 
 def aplicacion_final():
     # Llamada al script recetario.py usando subprocess
-    subprocess.call(["python", "seleccionar modo.py"])
+    subprocess.call(["python", "APP/seleccionar modo.py"])
 
 
 # Llamada a la función de inicio de sesión
