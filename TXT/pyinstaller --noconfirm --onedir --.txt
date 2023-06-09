@@ -1,0 +1,2 @@
+pyinstaller --noconfirm --onedir --windowed --add-data "<C:\Users\jesus\AppData\Local\Programs\Python\Python311\Lib\site-packages>/customtkinter;customtkinter/"  "<C:\Users\jesus\Desktop\Desarrollar juegos-apps\Programas python\Resetario V2\iniciarsesion.py>"
+

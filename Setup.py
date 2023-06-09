@@ -15,6 +15,7 @@ def iniciar_sesion():
     usuarios_registrados = {"Aragon": "jala1975", "Invitado": "invitadoamespa"}
 
     def verificar_credenciales():
+
         usuario = entry_usuario.get()
         contraseña = entry_contraseña.get()
 

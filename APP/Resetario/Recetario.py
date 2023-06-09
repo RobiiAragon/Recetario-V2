@@ -65,41 +65,41 @@ def hacer_preguntas():
 
 
 def llenar_datos_en_plantilla(nombre, edad, temp, ta, peso, fc, talla, fr, circun_abdom, id, alergias, tratamiento, indicaciones_generales, proxima_cita):
-    plantilla = openpyxl.load_workbook("receta.xlsx")
+    plantilla = openpyxl.load_workbook("/PLANTILLAS XLSX/receta.xlsx")
     hoja = plantilla.active
 
     hoja["J4"] = nombre
-    hoja["J36"] = nombre
-    hoja["H5"] = edad
-    hoja["H37"] = edad
+    hoja["J32"] = nombre
+    hoja["H6"] = edad
+    hoja["H34"] = edad
     # Fecha y hora automática en columna D4
     hoja["BB4"] = obtener_fecha_actual()
     # Fecha y hora automática en columna D34
-    hoja["BB36"] = obtener_fecha_actual()
-    hoja["R5"] = temp
-    hoja["R37"] = temp
-    hoja["H6"] = ta
-    hoja["H38"] = ta
-    hoja["R6"] = peso
-    hoja["R38"] = peso
-    hoja["H7"] = fc
-    hoja["H39"] = fc
-    hoja["R7"] = talla
-    hoja["R39"] = talla
-    hoja["H8"] = fr
-    hoja["H40"] = fr
-    hoja["L10"] = circun_abdom
-    hoja["L42"] = circun_abdom
-    hoja["H11"] = id
-    hoja["H43"] = id
-    hoja["I13"] = alergias
-    hoja["I45"] = alergias
-    hoja["AC6"] = tratamiento
-    hoja["AC38"] = tratamiento
-    hoja["O16"] = indicaciones_generales
+    hoja["BB32"] = obtener_fecha_actual()
+    hoja["Q6"] = temp
+    hoja["Q34"] = temp
+    hoja["G8"] = ta
+    hoja["G36"] = ta
+    hoja["Q8"] = peso
+    hoja["Q36"] = peso
+    hoja["G10"] = fc
+    hoja["G38"] = fc
+    hoja["Q10"] = talla
+    hoja["Q38"] = talla
+    hoja["G12"] = fr
+    hoja["G40"] = fr
+    hoja["L14"] = circun_abdom
+    hoja["K42"] = circun_abdom
+    hoja["G16"] = id
+    hoja["G44"] = id
+    hoja["H18"] = alergias
+    hoja["H46"] = alergias
+    hoja["X8"] = tratamiento
+    hoja["X36"] = tratamiento
+    hoja["O21"] = indicaciones_generales
     hoja["O48"] = indicaciones_generales
-    hoja["AF22"] = proxima_cita
-    hoja["AF54"] = proxima_cita
+    hoja["AF27"] = proxima_cita
+    hoja["AF55"] = proxima_cita
 
     # Cargar la imagen
     imagen = Image("receta.png")
