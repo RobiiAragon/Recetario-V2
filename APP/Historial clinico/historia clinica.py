@@ -5,8 +5,10 @@ import tkinter as tk
 from tkinter import filedialog
 from openpyxl.drawing.image import Image
 
+
 def obtener_fecha_actual():
     return datetime.datetime.now().strftime("%d-%m-%Y")
+
 
 def crear_carpeta_con_fecha_actual():
     fecha_actual = obtener_fecha_actual()
@@ -15,8 +17,9 @@ def crear_carpeta_con_fecha_actual():
         os.makedirs(carpeta)
     return carpeta
 
+
 def hacer_preguntas():
-    
+
     nombre = nombre_entry.get()
     if not nombre:
         nombre = " "  # Espacio en blanco
@@ -163,7 +166,7 @@ def hacer_preguntas():
     observaciones = observaciones_entry.get()
     if not observaciones:
         observaciones = " "  # Espacio en blanco
-    
+
     plantilla = llenar_datos_en_plantilla(nombre, edad, sexo, lugar_origen, lugar_residencia, estado_civil,
                                           antecedentes_hf, diabetes, epilepsia, hipertension, cardiovascular,
                                           lueticos, fimicos, neopla, sida, alimentacion, higiene_b, higiene_r, higiene_m,
@@ -173,9 +176,11 @@ def hacer_preguntas():
                                           leucorrea_menos, leucorrea_mas, caracteristicas, padecimiento_actual, peso,
                                           talla, ta, t, fc, fr, cabeza, cuello, torax, abdomen, miembros_sup, miembros_inf,
                                           estudios_clinicos, tratamiento, observaciones)
-    
-    ruta_historia_clinica_modificada = guardar_plantilla_modificada(plantilla, carpeta, nombre)
+
+    ruta_historia_clinica_modificada = guardar_plantilla_modificada(
+        plantilla, carpeta, nombre)
     imprimir_mensaje_exito(carpeta)
+
 
 window = tk.Tk()
 window.title("Generador de Reportes")
@@ -228,13 +233,15 @@ inmunizaciones_label = tk.Label(window, text="Inmunizaciones:")
 inmunizaciones_entry = tk.Entry(window)
 tabaquismo_menos_label = tk.Label(window, text="Tabaquismo (-):")
 tabaquismo_menos_var = tk.IntVar()
-tabaquismo_menos_checkbox = tk.Checkbutton(window, variable=tabaquismo_menos_var)
+tabaquismo_menos_checkbox = tk.Checkbutton(
+    window, variable=tabaquismo_menos_var)
 tabaquismo_mas_label = tk.Label(window, text="Tabaquismo (+):")
 tabaquismo_mas_var = tk.IntVar()
 tabaquismo_mas_checkbox = tk.Checkbutton(window, variable=tabaquismo_mas_var)
 alcoholismo_menos_label = tk.Label(window, text="Alcoholismo (-):")
 alcoholismo_menos_var = tk.IntVar()
-alcoholismo_menos_checkbox = tk.Checkbutton(window, variable=alcoholismo_menos_var)
+alcoholismo_menos_checkbox = tk.Checkbutton(
+    window, variable=alcoholismo_menos_var)
 alcoholismo_mas_label = tk.Label(window, text="Alcoholismo (+):")
 alcoholismo_mas_var = tk.IntVar()
 alcoholismo_mas_checkbox = tk.Checkbutton(window, variable=alcoholismo_mas_var)
@@ -315,11 +322,14 @@ tratamiento_entry = tk.Entry(window)
 observaciones_label = tk.Label(window, text="Observaciones:")
 observaciones_entry = tk.Entry(window)
 
+
 def generar_reporte():
     # Aquí va la lógica para generar el reporte
     pass
 
-generar_reporte_button = tk.Button(window, text="Generar Reporte", command=generar_reporte)
+
+generar_reporte_button = tk.Button(
+    window, text="Generar Reporte", command=generar_reporte)
 
 
 nombre_label.pack()

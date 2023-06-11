@@ -11,12 +11,21 @@ app.geometry("400x240")
 
 
 def button_function():
-    print("button pressed")
+    date = entry.get()  # Obtener la fecha ingresada por el usuario
+    print("Fecha ingresada:", date)
+
+
+# Crear una etiqueta y un campo de entrada para solicitar la fecha
+label = customtkinter.CTkLabel(app, text="Fecha:")
+label.place(relx=0.4, rely=0.4, anchor=tkinter.CENTER)
+
+entry = customtkinter.CTkEntry(app)
+entry.place(relx=0.6, rely=0.4, anchor=tkinter.CENTER)
 
 
 # Use CTkButton instead of tkinter Button
 button = customtkinter.CTkButton(
-    master=app, text="CTkButton", command=button_function)
+    master=app, text="Mostrar información", command=button_function)
 button.place(relx=0.5, rely=0.5, anchor=tkinter.CENTER)
 
 app.mainloop()

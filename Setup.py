@@ -28,7 +28,7 @@ def iniciar_sesion():
 
     # Crear la ventana de inicio de sesión
     root = tk.Tk()
-    root.title("Inicio de Sesión")
+    root.title("AME - Inicio de Sesión")
     root.geometry("300x200")  # Cambia las dimensiones según tus necesidades
 
     label_usuario = tk.Label(root, text="Nombre de usuario:")
