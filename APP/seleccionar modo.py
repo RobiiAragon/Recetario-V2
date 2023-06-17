@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import Tk
 from tkinter import messagebox
 import subprocess
 import os
@@ -38,6 +39,7 @@ def hoja_referencia():
 
 # Crear la ventana principal
 root = tk.Tk()
+root.iconbitmap('ico.ico')
 
 # Configurar el tamaño de la ventana
 root.geometry("300x250")

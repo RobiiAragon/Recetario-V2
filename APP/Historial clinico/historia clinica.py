@@ -2,6 +2,7 @@ import os
 import datetime
 import openpyxl
 import tkinter as tk
+from tkinter import Tk
 from tkinter import filedialog
 from openpyxl.drawing.image import Image
 
@@ -183,8 +184,9 @@ def hacer_preguntas():
 
 
 window = tk.Tk()
-window.title("Generador de Reportes")
+window.title("Generador de Historiales clinicos")
 window.geometry("350x850")
+window.iconbitmap('ico.ico')
 
 nombre_label = tk.Label(window, text="Nombre:")
 nombre_entry = tk.Entry(window)

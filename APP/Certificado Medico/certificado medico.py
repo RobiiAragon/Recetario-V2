@@ -2,6 +2,7 @@ import os
 import datetime
 import openpyxl
 import tkinter as tk
+from tkinter import Tk
 from tkinter import filedialog
 from openpyxl.drawing.image import Image
 
@@ -138,6 +139,7 @@ def generar_reporte():
 window = tk.Tk()
 window.title("Generador de Reportes")
 window.geometry("350x100")
+window.iconbitmap('ico.ico')
 
 generar_button = tk.Button(
     window, text="Generar Reporte", command=generar_reporte)

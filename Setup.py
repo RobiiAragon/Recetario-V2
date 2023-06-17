@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 import subprocess
 import customtkinter
+import mysql.connector
 
 # Modes: system (default), light, dark
 customtkinter.set_appearance_mode("dark")
@@ -10,14 +11,26 @@ customtkinter.set_default_color_theme("blue")
 
 
 def iniciar_sesion():
-    # Agrega aquí los usuarios y contraseñas permitidos
-    usuarios_registrados = {"Aragon": "jala1975", "Invitado": "invitadoamespa"}
-
     def verificar_credenciales():
         usuario = entry_usuario.get()
         contraseña = entry_contraseña.get()
 
-        if usuario in usuarios_registrados and contraseña == usuarios_registrados[usuario]:
+        # Establecer conexión con la base de datos
+        connection = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="",
+            database="AME"
+        )
+        cursor = connection.cursor()
+
+        # Ejecutar consulta para verificar las credenciales
+        query = "SELECT * FROM usuarios WHERE usuario = %s AND contraseña = %s"
+        values = (usuario, contraseña)
+        cursor.execute(query, values)
+        result = cursor.fetchone()
+
+        if result:
             messagebox.showinfo("Inicio de sesión exitoso",
                                 "¡Bienvenido, {}!".format(usuario))
             root.destroy()  # Cerrar la ventana de inicio de sesión
@@ -26,10 +39,15 @@ def iniciar_sesion():
             messagebox.showerror("Error de inicio de sesión",
                                  "Credenciales incorrectas. Por favor, intente nuevamente.")
 
+        # Cerrar la conexión con la base de datos
+        cursor.close()
+        connection.close()
+
     # Crear la ventana de inicio de sesión
     root = tk.Tk()
     root.title("AME - Inicio de Sesión")
     root.geometry("300x200")  # Cambia las dimensiones según tus necesidades
+    root.iconbitmap('ico.ico')
 
     label_usuario = tk.Label(root, text="Nombre de usuario:")
     label_usuario.pack()

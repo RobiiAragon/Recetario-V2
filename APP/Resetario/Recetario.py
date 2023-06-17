@@ -2,6 +2,7 @@ import os
 import datetime
 import openpyxl
 import tkinter as tk
+from tkinter import Tk
 from tkinter import filedialog
 from openpyxl.drawing.image import Image
 import mysql.connector
@@ -119,9 +120,10 @@ def generar_reporte(entries):
     imprimir_mensaje_exito(carpeta)
 
 
-window = tk.Tk()
-window.title("Generador de Reportes")
+window = Tk()
+window.title("Generador de Resetas medicas")
 window.geometry("350x650")
+window.iconbitmap('ico.ico')
 
 labels = [
     "Nombre:", "Edad:", "Temp:", "T.A.:", "Peso:", "F.C.:", "Talla:", "F.R.:",
