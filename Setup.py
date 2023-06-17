@@ -1,16 +1,16 @@
-import tkinter as tk
-from tkinter import messagebox
 import subprocess
-import customtkinter
+import customtkinter as ctk
 import mysql.connector
+from tkinter import messagebox
 
 # Modes: system (default), light, dark
-customtkinter.set_appearance_mode("dark")
+ctk.set_appearance_mode("dark")
 # Themes: blue (default), dark-blue, green
-customtkinter.set_default_color_theme("blue")
+ctk.set_default_color_theme("blue")
 
 
 def iniciar_sesion():
+    # Función para verificar las credenciales del usuario
     def verificar_credenciales():
         usuario = entry_usuario.get()
         contraseña = entry_contraseña.get()
@@ -44,25 +44,25 @@ def iniciar_sesion():
         connection.close()
 
     # Crear la ventana de inicio de sesión
-    root = tk.Tk()
+    root = ctk.CTk()
     root.title("AME - Inicio de Sesión")
     root.geometry("300x200")  # Cambia las dimensiones según tus necesidades
     root.iconbitmap('ico.ico')
 
-    label_usuario = tk.Label(root, text="Nombre de usuario:")
-    label_usuario.pack()
-    entry_usuario = tk.Entry(root)
-    entry_usuario.pack()
+    label_usuario = ctk.CTkLabel(root, text="Nombre de usuario:")
+    label_usuario.grid(row=0, column=0, padx=10, pady=10)
+    entry_usuario = ctk.CTkEntry(root)
+    entry_usuario.grid(row=0, column=1, padx=10, pady=10)
 
-    label_contraseña = tk.Label(root, text="Contraseña:")
-    label_contraseña.pack()
-    entry_contraseña = tk.Entry(root, show="*")
-    entry_contraseña.pack()
+    label_contraseña = ctk.CTkLabel(root, text="Contraseña:")
+    label_contraseña.grid(row=1, column=0, padx=10, pady=10)
+    entry_contraseña = ctk.CTkEntry(root, show="*")
+    entry_contraseña.grid(row=1, column=1, padx=10, pady=10)
 
     # Utilizar CTkButton en lugar de Button
-    button_iniciar_sesion = customtkinter.CTkButton(
+    button_iniciar_sesion = ctk.CTkButton(
         root, text="Iniciar Sesión", command=verificar_credenciales)
-    button_iniciar_sesion.pack()
+    button_iniciar_sesion.grid(row=2, column=0, columnspan=2, padx=10, pady=10)
 
     root.mainloop()
 

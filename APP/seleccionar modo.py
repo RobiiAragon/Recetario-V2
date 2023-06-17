@@ -1,9 +1,5 @@
-import tkinter as tk
-from tkinter import Tk
-from tkinter import messagebox
 import subprocess
-import os
-import customtkinter
+import customtkinter as ctk
 
 
 def cerrar_sesion():
@@ -38,39 +34,39 @@ def hoja_referencia():
 
 
 # Crear la ventana principal
-root = tk.Tk()
+root = ctk.CTk()
 root.iconbitmap('ico.ico')
-
+root.title("AME - Selecciona modo")
 # Configurar el tamaño de la ventana
 root.geometry("300x250")
 
 # Botón para cerrar sesión
-btn_cerrar_sesion = customtkinter.CTkButton(
+btn_cerrar_sesion = ctk.CTkButton(
     root, text="Cerrar sesión", command=cerrar_sesion)
 btn_cerrar_sesion.pack(pady=10)
 
 # Botón para redirigir a recetario.py
-btn_redirigir = customtkinter.CTkButton(
+btn_redirigir = ctk.CTkButton(
     root, text="Crear receta", command=Crear_receta)
 btn_redirigir.pack(pady=5)
 
 # Botón para redirigir a certificado_medico
-btn_redirigir = customtkinter.CTkButton(
+btn_redirigir = ctk.CTkButton(
     root, text="Certificado Médico", command=certificado_medico)
 btn_redirigir.pack(pady=5)
 
 # Botón para redirigir a Crear_Historial
-btn_redirigir = customtkinter.CTkButton(
+btn_redirigir = ctk.CTkButton(
     root, text="Crear Historial", command=Crear_Historial)
 btn_redirigir.pack(pady=5)
 
 # Botón para redirigir a notadeevolucion
-btn_redirigir = customtkinter.CTkButton(
+btn_redirigir = ctk.CTkButton(
     root, text="Nota de Evolución", command=notadeevolucion)
 btn_redirigir.pack(pady=5)
 
 # Botón para redirigir a hoja_referencia
-btn_redirigir = customtkinter.CTkButton(
+btn_redirigir = ctk.CTkButton(
     root, text="Hoja de Referencia", command=hoja_referencia)
 btn_redirigir.pack(pady=5)
 
