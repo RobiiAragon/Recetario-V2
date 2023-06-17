@@ -2,7 +2,7 @@ import os
 import datetime
 import openpyxl
 import tkinter as tk
-from tkinter import ttk  # Mejora los widgets
+from tkinter import ttk
 from tkinter import filedialog
 from openpyxl.drawing.image import Image
 import mysql.connector
@@ -59,7 +59,6 @@ def save_to_database(cursor, conexion, data):
     conexion.commit()
 
 
-# Cargar y modificar la plantilla con los datos recogidos
 # Cargar y modificar la plantilla con los datos recogidos
 def fill_data_into_template(template, data):
     sheet = template.active
@@ -125,11 +124,9 @@ def generate_report(entries):
 
 # Crear y configurar la ventana
 window = tk.Tk()
-window.title("Generador de Recetas Medicas")
-# Aumenté el tamaño de la ventana para acomodar los nuevos widgets
-window.geometry("1200x400")
-window.configure(background='lightgrey')  # Cambio de color de fondo
-window.iconbitmap('ico.ico')
+window.title("Generador de Recetas Médicas")
+window.geometry("450x500")
+window.configure(background='#242324')
 
 labels = [
     "Nombre:", "Edad:", "Temp:", "T.A.:", "Peso:", "F.C.:", "Talla:", "F.R.:",
@@ -141,46 +138,32 @@ entries = []
 
 # Crear un estilo para los widgets
 style = ttk.Style()
-style.configure('TLabel', background='lightgrey', font=('Arial', 11))
-style.configure('TEntry', fieldbackground='white', foreground='black')
+style.configure('TLabel', background='#242324',
+                foreground='white', font=('Arial', 12))
+style.configure('TEntry', fieldbackground='lightgray',
+                foreground='black', font=('Arial', 12))
 style.configure('TButton', font=('Arial', 12, 'bold'), borderwidth='1')
-style.configure('TLabelframe', background='lightgrey',
+style.configure('TLabelframe', background='black',
                 foreground='darkblue', font=('Arial', 14, 'bold'))
 
-# Crear frames para agrupar los campos
-patient_data_frame = ttk.LabelFrame(window, text=" Datos del paciente ")
-patient_data_frame.pack(pady=10, padx=10, fill='x')
-
-medical_data_frame = ttk.LabelFrame(window, text=" Datos médicos ")
-medical_data_frame.pack(pady=10, padx=10, fill='x')
-
-allergies_frame = ttk.LabelFrame(window, text=" Alergias y Tratamiento ")
-allergies_frame.pack(pady=10, padx=10, fill='x')
-
-instructions_frame = ttk.LabelFrame(window, text=" Indicaciones y Cita ")
-instructions_frame.pack(pady=10, padx=10, fill='x')
-
-frames = [patient_data_frame, medical_data_frame,
-          allergies_frame, instructions_frame]
 
 # Crear las etiquetas y las entradas de datos
 for index, label_text in enumerate(labels):
-    # Utilizamos el operador de división entera para seleccionar el frame
-    label = ttk.Label(frames[index//4], text=label_text)
-    label.pack(side='left', padx=(10, 0))
-    entry = DateEntry(frames[index//4], date_pattern='dd-mm-yyyy',
-                      width=30) if label_text == "Próxima Cita:" else ttk.Entry(frames[index//4], width=30)
-    entry.pack(side='left', padx=(0, 10))
+    label = ttk.Label(window, text=label_text, style='TLabel')
+    label.grid(row=index, column=0, padx=10, pady=5)
+    entry = DateEntry(window, date_pattern='dd-mm-yyyy',
+                      width=30) if label_text == "Próxima Cita:" else ttk.Entry(window, width=30)
+    entry.grid(row=index, column=1, padx=10, pady=5)
     entries.append(entry)
 
 # Crear el botón para generar el reporte
 generate_button = ttk.Button(
-    window, text="Generar Reporte", command=lambda: generate_report(entries))
-generate_button.pack(pady=10)
+    window, text="Generar Reporte", command=lambda: generate_report(entries), style='TButton')
+generate_button.grid(row=len(labels), columnspan=2, padx=10, pady=10)
 
 # Crear la etiqueta para los mensajes
 message_label = tk.Label(window, wraplength=350,
-                         bg='lightgrey', fg='red', font=('Arial', 11))
-message_label.pack(pady=10)
+                         bg='white', fg='red', font=('Arial', 11))
+message_label.grid(row=len(labels) + 1, columnspan=2, padx=10, pady=5)
 
 window.mainloop()
