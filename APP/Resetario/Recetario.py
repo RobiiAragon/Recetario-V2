@@ -3,6 +3,7 @@ import datetime
 import openpyxl
 import tkinter as tk
 from tkinter import ttk
+import customtkinter as ctk
 from tkinter import filedialog
 from openpyxl.drawing.image import Image
 import mysql.connector
@@ -123,10 +124,11 @@ def generate_report(entries):
 
 
 # Crear y configurar la ventana
-window = tk.Tk()
+window = ctk.CTk()
 window.title("Generador de Recetas Médicas")
 window.geometry("450x500")
 window.configure(background='#242324')
+
 
 labels = [
     "Nombre:", "Edad:", "Temp:", "T.A.:", "Peso:", "F.C.:", "Talla:", "F.R.:",
@@ -136,20 +138,19 @@ labels = [
 
 entries = []
 
-# Crear un estilo para los widgets
-style = ttk.Style()
-style.configure('TLabel', background='#242324',
-                foreground='white', font=('Arial', 12))
-style.configure('TEntry', fieldbackground='lightgray',
-                foreground='black', font=('Arial', 12))
-style.configure('TButton', font=('Arial', 12, 'bold'), borderwidth='1')
-style.configure('TLabelframe', background='black',
-                foreground='darkblue', font=('Arial', 14, 'bold'))
-
+# Centrar la ventana en la pantalla
+window.update_idletasks()  # Actualizar la ventana antes de obtener las dimensiones
+screen_width = window.winfo_screenwidth()
+screen_height = window.winfo_screenheight()
+window_width = window.winfo_width()
+window_height = window.winfo_height()
+x = (screen_width // 2) - (window_width // 2)
+y = (screen_height // 2) - (window_height // 2)
+window.geometry(f"+{x}+{y}")
 
 # Crear las etiquetas y las entradas de datos
 for index, label_text in enumerate(labels):
-    label = ttk.Label(window, text=label_text, style='TLabel')
+    label = ttk.Label(window, text=label_text)
     label.grid(row=index, column=0, padx=10, pady=5)
     entry = DateEntry(window, date_pattern='dd-mm-yyyy',
                       width=30) if label_text == "Próxima Cita:" else ttk.Entry(window, width=30)
@@ -158,12 +159,7 @@ for index, label_text in enumerate(labels):
 
 # Crear el botón para generar el reporte
 generate_button = ttk.Button(
-    window, text="Generar Reporte", command=lambda: generate_report(entries), style='TButton')
+    window, text="Generar Reporte", command=lambda: generate_report(entries))
 generate_button.grid(row=len(labels), columnspan=2, padx=10, pady=10)
-
-# Crear la etiqueta para los mensajes
-message_label = tk.Label(window, wraplength=350,
-                         bg='white', fg='red', font=('Arial', 11))
-message_label.grid(row=len(labels) + 1, columnspan=2, padx=10, pady=5)
 
 window.mainloop()
