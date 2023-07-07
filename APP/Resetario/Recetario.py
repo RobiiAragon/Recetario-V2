@@ -126,13 +126,12 @@ def generate_report(entries):
 # Crear y configurar la ventana
 window = ctk.CTk()
 window.title("Generador de Recetas Médicas")
-window.geometry("450x500")
+window.geometry("410x590")
 window.configure(background='#242324')
 
-
 labels = [
-    "Nombre:", "Edad:", "Temp:", "T.A.:", "Peso:", "F.C.:", "Talla:", "F.R.:",
-    "Circun. Abdom.:", "I.D:", "Alergias:", "Tratamiento:", "Indicaciones Generales:",
+    "Nombre:", "Edad:", "Temp:", "T.A.", "Peso:", "F.C.", "Talla:", "F.R.",
+    "Circun. Abdom.", "I.D:", "Alergias:", "Tratamiento:", "Indicaciones Generales:",
     "Próxima Cita:"
 ]
 
@@ -144,22 +143,20 @@ screen_width = window.winfo_screenwidth()
 screen_height = window.winfo_screenheight()
 window_width = window.winfo_width()
 window_height = window.winfo_height()
-x = (screen_width // 2) - (window_width // 2)
+x = (screen_width // 5) - (window_width // 5)
 y = (screen_height // 2) - (window_height // 2)
 window.geometry(f"+{x}+{y}")
 
 # Crear las etiquetas y las entradas de datos
 for index, label_text in enumerate(labels):
-    label = ttk.Label(window, text=label_text)
+    label = ctk.CTkLabel(window, text=label_text, width=20)
     label.grid(row=index, column=0, padx=10, pady=5)
-    entry = DateEntry(window, date_pattern='dd-mm-yyyy',
-                      width=30) if label_text == "Próxima Cita:" else ttk.Entry(window, width=30)
+    entry = DateEntry(window, date_pattern='dd-mm-yyyy',height=20, width=40) if label_text == "Próxima Cita:" else ctk.CTkEntry(window, width=200)
     entry.grid(row=index, column=1, padx=10, pady=5)
     entries.append(entry)
 
 # Crear el botón para generar el reporte
-generate_button = ttk.Button(
-    window, text="Generar Reporte", command=lambda: generate_report(entries))
+generate_button = ctk.CTkButton(window, text="Generar Reporte", command=lambda: generate_report(entries))
 generate_button.grid(row=len(labels), columnspan=2, padx=10, pady=10)
 
 window.mainloop()

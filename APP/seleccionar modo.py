@@ -42,32 +42,32 @@ root.geometry("300x250")
 
 # Botón para cerrar sesión
 btn_cerrar_sesion = ctk.CTkButton(
-    root, text="Cerrar sesión", command=cerrar_sesion)
+    root, text="Cerrar sesión 🔒", command=cerrar_sesion)
 btn_cerrar_sesion.pack(pady=10)
 
 # Botón para redirigir a recetario.py
 btn_redirigir = ctk.CTkButton(
-    root, text="Crear receta", command=Crear_receta)
+    root, text="Crear receta 📝", command=Crear_receta)
 btn_redirigir.pack(pady=5)
 
 # Botón para redirigir a certificado_medico
 btn_redirigir = ctk.CTkButton(
-    root, text="Certificado Médico", command=certificado_medico)
+    root, text="Certificado Médico 📑", command=certificado_medico)
 btn_redirigir.pack(pady=5)
 
 # Botón para redirigir a Crear_Historial
 btn_redirigir = ctk.CTkButton(
-    root, text="Crear Historial", command=Crear_Historial)
+    root, text="Crear Historial 🗂️", command=Crear_Historial)
 btn_redirigir.pack(pady=5)
 
 # Botón para redirigir a notadeevolucion
 btn_redirigir = ctk.CTkButton(
-    root, text="Nota de Evolución", command=notadeevolucion)
+    root, text="Nota de Evolución 📊", command=notadeevolucion)
 btn_redirigir.pack(pady=5)
 
 # Botón para redirigir a hoja_referencia
 btn_redirigir = ctk.CTkButton(
-    root, text="Hoja de Referencia", command=hoja_referencia)
+    root, text="Hoja de Referencia 🗒️", command=hoja_referencia)
 btn_redirigir.pack(pady=5)
 
 # Iniciar el bucle principal de la ventana
