@@ -109,11 +109,39 @@ def print_success_message_and_open_folder(folder):
     print("La receta modificada se ha guardado en la carpeta", folder)
     os.startfile(folder)
 
-# Función para mostrar un diálogo de selección múltiple
+import tkinter as tk
+import customtkinter as ctk
+
+def update_checkboxes(search_var, options, variables, checkboxes, checkbox_area):
+    search_text = search_var.get().lower()
+    for checkbox, option, variable in zip(checkboxes, options, variables):
+        checkbox_area.delete(checkbox)
+    checkboxes.clear()
+    variables.clear()
+    y = 0
+    for option in options:
+        if search_text in option.lower():
+            check_var = tk.BooleanVar()
+            variables.append(check_var)
+            checkbox = ctk.CTkCheckBox(checkbox_area, text=option, variable=check_var, onvalue=True, offvalue=False, text_color='black')
+            checkboxes.append(checkbox_area.create_window(0, y*30, window=checkbox, anchor='nw'))
+            y += 1
+    checkbox_area.config(scrollregion=checkbox_area.bbox('all'))
+
 def show_multi_select_dialog(master, options, var):
-    dialog = Toplevel(master)
+    dialog = tk.Toplevel(master)
     dialog.title("Seleccione Tratamientos")
-    dialog.geometry("400x300")  # Establecer las dimensiones de la ventana
+    dialog.geometry("400x350")  # Establecer las dimensiones de la ventana
+
+    search_frame = tk.Frame(dialog)
+    search_frame.pack(padx=3, pady=3)
+
+    search_label = tk.Label(search_frame, text="Buscador:")
+    search_label.pack(side="left")
+
+    search_var = tk.StringVar()
+    search_bar = tk.Entry(search_frame, textvariable=search_var)
+    search_bar.pack(side="left")
 
     frame = tk.Frame(dialog)  # Crear un marco para el scrollbar y los checkbox
     frame.pack()
@@ -127,16 +155,20 @@ def show_multi_select_dialog(master, options, var):
     scrollbar.config(command=checkbox_area.yview)  # Configurar el scrollbar para actualizar la vista del área de checkbox
 
     variables = []
+    checkboxes = []
     for option in options:
         check_var = tk.BooleanVar()
         variables.append(check_var)
-        checkbox = tk.Checkbutton(checkbox_area, text=option, variable=check_var, onvalue=True, offvalue=False)
-        checkbox_area.create_window(0, len(variables)*25, window=checkbox, anchor='nw')
+        checkbox = ctk.CTkCheckBox(checkbox_area, text=option, variable=check_var, onvalue=True, offvalue=False, text_color='black')
+        checkboxes.append(checkbox_area.create_window(0, len(variables)*30, window=checkbox, anchor='nw'))
 
     checkbox_area.config(scrollregion=checkbox_area.bbox('all'))  # Configurar la región de desplazamiento del área de checkbox para que incluya todos los checkbox
 
-    submit_button = tk.Button(dialog, text="Submit", command=lambda: var.set(", ".join([option for option, selected in zip(options, variables) if selected.get()])))
+    search_var.trace("w", lambda *args: update_checkboxes(search_var, options, variables, checkboxes, checkbox_area))
+
+    submit_button = ctk.CTkButton(dialog, text="Submit", command=lambda: var.set(", ".join([option for option, selected in zip(options, variables) if selected.get()])))
     submit_button.pack()
+
 
 # Obtener los tratamientos de la base de datos
 def get_treatments(cursor):

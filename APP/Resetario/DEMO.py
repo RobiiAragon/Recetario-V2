@@ -2,205 +2,115 @@ import os
 import datetime
 import openpyxl
 import tkinter as tk
-from tkinter import ttk
 import customtkinter as ctk
-from tkinter import filedialog
+from tkinter import filedialog, messagebox, Toplevel
 from openpyxl.drawing.image import Image
 import mysql.connector
 from tkcalendar import DateEntry
-from tkinter import Toplevel  # Importar Toplevel
 
+# Definición de constantes
+DATABASE_HOST = "localhost"
+DATABASE_USER = "root"
+DATABASE_PASSWORD = os.environ.get("DATABASE_PASSWORD")  # La contraseña se obtiene desde una variable de entorno
+DATABASE_NAME = "AME"
+DATE_PATTERN = 'dd-mm-yyyy'
+DATE_FORMAT = "%d-%m-%Y"
 
-# Conexión a la base de datos
-def get_database_connection():
-    return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="",
-        database="AME"
-    )
+class Database:
+    def __init__(self, host, user, password, database):
+        self.host = host
+        self.user = user
+        self.password = password
+        self.database = database
 
+    def get_connection(self):
+        return mysql.connector.connect(
+            host=self.host,
+            user=self.user,
+            password=self.password,
+            database=self.database
+        )
 
-# Crear el cursor de la base de datos
-def get_database_cursor(conexion):
-    return conexion.cursor()
+    def get_cursor(self, connection):
+        return connection.cursor()
 
+    def save_to_database(self, data, cursor, connection):
+        query = "INSERT INTO recetas (fecha, nombre, edad, temp, ta, peso, fc, talla, fr, circun_abdom, id, alergias, tratamiento, indicaciones_generales, proxima_cita) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        data_with_date = (datetime.datetime.now().strftime(DATE_FORMAT),) + data
+        cursor.execute(query, data_with_date)
+        cursor.execute("ALTER TABLE recetas AUTO_INCREMENT = 1")
+        connection.commit()
 
-# Obtener la fecha actual
-def get_current_date():
-    return datetime.datetime.now().strftime("%d-%m-%Y")
+    def get_treatments(self, cursor):
+        cursor.execute("SELECT nombre FROM tratamientos")
+        return [row[0] for row in cursor.fetchall()]
 
+class Application:
+    def __init__(self, window, database, labels):
+        self.window = window
+        self.database = database
+        self.labels = labels
+        self.entries = []
 
-# Crear una carpeta con la fecha actual si no existe
-def create_folder_with_current_date():
-    current_date = get_current_date()
-    folder = os.path.join(os.getcwd(), "Recetarios", current_date)
-    if not os.path.exists(folder):
-        os.makedirs(folder)
-    return folder
+    def validate_inputs(self, entries):
+        # Aquí puedes agregar tu lógica para validar las entradas
+        return True
 
+    def ask_questions(self):
+        answers = []
+        for entry in self.entries:
+            answer = entry.get() if entry.get() else " "
+            answers.append(answer)
+        return tuple(answers)
 
-# Hacer preguntas y devolver las respuestas
-def ask_questions(entries):
-    answers = []
-    for entry in entries:
-        # Espacio en blanco si no hay respuesta
-        answer = entry.get() if entry.get() else " "
-        answers.append(answer)
-    return tuple(answers)
+    def generate_report(self):
+        data = self.ask_questions()
+        if not self.validate_inputs(data):
+            messagebox.showerror("Error", "Por favor, introduzca datos válidos.")
+            return
+        connection = self.database.get_connection()
+        cursor = self.database.get_cursor(connection)
+        self.database.save_to_database(data, cursor, connection)
+        connection.close()
+        # Aquí puedes continuar con el resto de tu lógica para generar el reporte...
 
+    def run(self):
+        connection = self.database.get_connection()
+        cursor = self.database.get_cursor(connection)
+        treatments = self.database.get_treatments(cursor)
+        connection.close()
 
-# Guardar datos en la base de datos
-def save_to_database(cursor, conexion, data):
-    # Insertar los datos en la base de datos
-    query = "INSERT INTO recetas (fecha, nombre, edad, temp, ta, peso, fc, talla, fr, circun_abdom, id, alergias, tratamiento, indicaciones_generales, proxima_cita) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-    data_with_date = (get_current_date(),) + \
-        data  # Agregar la fecha a los datos
-    cursor.execute(query, data_with_date)
-    cursor.execute("ALTER TABLE recetas AUTO_INCREMENT = 1")
-    conexion.commit()
+        for index, label_text in enumerate(self.labels):
+            label = ctk.CTkLabel(self.window, text=label_text, width=20)
+            label.grid(row=index, column=0, padx=10, pady=5)
+            if label_text == "Tratamiento:":
+                var = tk.StringVar()
+                button = tk.Button(self.window, text="Seleccionar Tratamientos", command=lambda: self.show_multi_select_dialog(treatments, var))
+                button.grid(row=index, column=1, padx=10, pady=5)
+                self.entries.append(var)
+            else:
+                entry = DateEntry(self.window, date_pattern=DATE_PATTERN, height=20, width=40) if label_text == "Próxima Cita:" else ctk.CTkEntry(self.window, width=200)
+                entry.grid(row=index, column=1, padx=10, pady=5)
+                self.entries.append(entry)
 
+        generate_button = ctk.CTkButton(self.window, text="Generar Reporte", command=self.generate_report)
+        generate_button.grid(row=len(self.labels), columnspan=2, padx=10, pady=10)
 
-# Cargar y modificar la plantilla con los datos recogidos
-def fill_data_into_template(template, data):
-    sheet = template.active
-    sheet["J4"] = data[0]
-    sheet["J32"] = data[0]
-    sheet["H6"] = data[1]
-    sheet["H34"] = data[1]
-    sheet["BB4"] = get_current_date()
-    sheet["BB32"] = get_current_date()
-    sheet["Q6"] = data[2]
-    sheet["Q34"] = data[2]
-    sheet["G8"] = data[3]
-    sheet["G36"] = data[3]
-    sheet["Q8"] = data[4]
-    sheet["Q36"] = data[4]
-    sheet["G10"] = data[5]
-    sheet["G38"] = data[5]
-    sheet["Q10"] = data[6]
-    sheet["Q38"] = data[6]
-    sheet["G12"] = data[7]
-    sheet["G40"] = data[7]
-    sheet["L14"] = data[8]
-    sheet["K42"] = data[8]
-    sheet["G16"] = data[9]
-    sheet["G44"] = data[9]
-    sheet["H18"] = data[10]
-    sheet["H46"] = data[10]
-    sheet["Y8"] = data[11]
-    sheet["Y36"] = data[11]
-    sheet["O21"] = data[12]
-    sheet["O48"] = data[12]
-    sheet["AF27"] = data[13]
-    sheet["AF55"] = data[13]
-    return template
+        self.window.mainloop()
 
+if __name__ == "__main__":
+    labels = [
+        "Nombre:", "Edad:", "Temp:", "T.A.", "Peso:", "F.C.", "Talla:", "F.R.",
+        "Circun. Abdom.", "I.D:", "Alergias:", "Tratamiento:", "Indicaciones Generales:",
+        "Próxima Cita:"
+    ]
 
-# Guardar la plantilla modificada
-def save_modified_template(template, folder, pdf_name):
-    modified_recipe_path = os.path.join(folder, f"{pdf_name}.xlsx")
-    template.save(modified_recipe_path)
-    return modified_recipe_path
+    window = ctk.CTk()
+    window.title("Generador de Recetas Médicas")
+    window.geometry("410x590")
+    window.configure(background='#242324')
 
+    database = Database(DATABASE_HOST, DATABASE_USER, DATABASE_PASSWORD, DATABASE_NAME)
 
-# Imprimir el mensaje de éxito y abrir la carpeta donde se guardó la receta
-def print_success_message_and_open_folder(folder):
-    print("La receta modificada se ha guardado en la carpeta", folder)
-    os.startfile(folder)
-
-# Función para mostrar un diálogo de selección múltiple
-def show_multi_select_dialog(master, options, var):
-    dialog = Toplevel(master)
-    dialog.title("Seleccione Tratamientos")
-    dialog.geometry("400x300")  # Establecer las dimensiones de la ventana
-
-    frame = tk.Frame(dialog)  # Crear un marco para el scrollbar y los checkbox
-    frame.pack()
-
-    scrollbar = tk.Scrollbar(frame)  # Crear el scrollbar
-    scrollbar.pack(side="right", fill="y")
-
-    checkbox_area = tk.Canvas(frame, yscrollcommand=scrollbar.set)  # Crear el área de checkbox y conectarla al scrollbar
-    checkbox_area.pack(side="left")
-
-    scrollbar.config(command=checkbox_area.yview)  # Configurar el scrollbar para actualizar la vista del área de checkbox
-
-    variables = []
-    for option in options:
-        check_var = tk.BooleanVar()
-        variables.append(check_var)
-        checkbox = tk.Checkbutton(checkbox_area, text=option, variable=check_var, onvalue=True, offvalue=False)
-        checkbox_area.create_window(0, len(variables)*25, window=checkbox, anchor='nw')
-
-    checkbox_area.config(scrollregion=checkbox_area.bbox('all'))  # Configurar la región de desplazamiento del área de checkbox para que incluya todos los checkbox
-
-    submit_button = tk.Button(dialog, text="Submit", command=lambda: var.set(", ".join([option for option, selected in zip(options, variables) if selected.get()])))
-    submit_button.pack()
-
-# Obtener los tratamientos de la base de datos
-def get_treatments(cursor):
-    cursor.execute("SELECT nombre FROM tratamientos")
-    return [row[0] for row in cursor.fetchall()]
-
-
-# Generar el reporte
-def generate_report(entries):
-    folder = create_folder_with_current_date()
-    data = ask_questions(entries)
-    conexion = get_database_connection()
-    cursor = get_database_cursor(conexion)
-    save_to_database(cursor, conexion, data)
-    template = openpyxl.load_workbook("PLANTILLAS XLSX/receta.xlsx")
-    modified_template = fill_data_into_template(template, data)
-    modified_recipe_path = save_modified_template(
-        modified_template, folder, data[0])
-    print_success_message_and_open_folder(folder)
-
-
-# Crear y configurar la ventana
-window = ctk.CTk()
-window.title("Generador de Recetas Médicas")
-window.geometry("410x590")
-window.configure(background='#242324')
-
-labels = [
-    "Nombre:", "Edad:", "Temp:", "T.A.", "Peso:", "F.C.", "Talla:", "F.R.",
-    "Circun. Abdom.", "I.D:", "Alergias:", "Tratamiento:", "Indicaciones Generales:",
-    "Próxima Cita:"
-]
-
-entries = []
-
-# Centrar la ventana en la pantalla
-window.update_idletasks()  # Actualizar la ventana antes de obtener las dimensiones
-screen_width = window.winfo_screenwidth()
-screen_height = window.winfo_screenheight()
-window_width = window.winfo_width()
-window_height = window.winfo_height()
-x = (screen_width // 5) - (window_width // 5)
-y = (screen_height // 2) - (window_height // 2)
-window.geometry(f"+{x}+{y}")
-
-# Crear las etiquetas y las entradas de datos
-conexion = get_database_connection()
-cursor = get_database_cursor(conexion)
-treatments = get_treatments(cursor)
-for index, label_text in enumerate(labels):
-    label = ctk.CTkLabel(window, text=label_text, width=20)
-    label.grid(row=index, column=0, padx=10, pady=5)
-    if label_text == "Tratamiento:":
-        var = tk.StringVar()
-        button = tk.Button(window, text="Seleccionar Tratamientos", command=lambda: show_multi_select_dialog(window, treatments, var))
-        button.grid(row=index, column=1, padx=10, pady=5)
-        entries.append(var)
-    else:
-        entry = DateEntry(window, date_pattern='dd-mm-yyyy',height=20, width=40) if label_text == "Próxima Cita:" else ctk.CTkEntry(window, width=200)
-        entry.grid(row=index, column=1, padx=10, pady=5)
-        entries.append(entry)
-
-# Crear el botón para generar el reporte
-generate_button = ctk.CTkButton(window, text="Generar Reporte", command=lambda: generate_report(entries))
-generate_button.grid(row=len(labels), columnspan=2, padx=10, pady=10)
-
-window.mainloop()
+    app = Application(window, database, labels)
+    app.run()

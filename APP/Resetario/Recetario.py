@@ -8,6 +8,7 @@ from tkinter import filedialog
 from openpyxl.drawing.image import Image
 import mysql.connector
 from tkcalendar import DateEntry
+from tkinter import Toplevel  # Importar Toplevel
 
 
 # Conexión a la base de datos
@@ -108,6 +109,72 @@ def print_success_message_and_open_folder(folder):
     print("La receta modificada se ha guardado en la carpeta", folder)
     os.startfile(folder)
 
+import tkinter as tk
+import customtkinter as ctk
+
+def update_checkboxes(search_var, options, variables, checkboxes, checkbox_area):
+    search_text = search_var.get().lower()
+    for checkbox, option, variable in zip(checkboxes, options, variables):
+        checkbox_area.delete(checkbox)
+    checkboxes.clear()
+    variables.clear()
+    y = 0
+    for option in options:
+        if search_text in option.lower():
+            check_var = tk.BooleanVar()
+            variables.append(check_var)
+            checkbox = ctk.CTkCheckBox(checkbox_area, text=option, variable=check_var, onvalue=True, offvalue=False, text_color='black')
+            checkboxes.append(checkbox_area.create_window(0, y*30, window=checkbox, anchor='nw'))
+            y += 1
+    checkbox_area.config(scrollregion=checkbox_area.bbox('all'))
+
+def show_multi_select_dialog(master, options, var):
+    dialog = tk.Toplevel(master)
+    dialog.title("Seleccione Tratamientos")
+    dialog.geometry("400x350")  # Establecer las dimensiones de la ventana
+
+    search_frame = tk.Frame(dialog)
+    search_frame.pack(padx=3, pady=3)
+
+    search_label = tk.Label(search_frame, text="Buscador:")
+    search_label.pack(side="left")
+
+    search_var = tk.StringVar()
+    search_bar = tk.Entry(search_frame, textvariable=search_var)
+    search_bar.pack(side="left")
+
+    frame = tk.Frame(dialog)  # Crear un marco para el scrollbar y los checkbox
+    frame.pack()
+
+    scrollbar = tk.Scrollbar(frame)  # Crear el scrollbar
+    scrollbar.pack(side="right", fill="y")
+
+    checkbox_area = tk.Canvas(frame, yscrollcommand=scrollbar.set)  # Crear el área de checkbox y conectarla al scrollbar
+    checkbox_area.pack(side="left")
+
+    scrollbar.config(command=checkbox_area.yview)  # Configurar el scrollbar para actualizar la vista del área de checkbox
+
+    variables = []
+    checkboxes = []
+    for option in options:
+        check_var = tk.BooleanVar()
+        variables.append(check_var)
+        checkbox = ctk.CTkCheckBox(checkbox_area, text=option, variable=check_var, onvalue=True, offvalue=False, text_color='black')
+        checkboxes.append(checkbox_area.create_window(0, len(variables)*30, window=checkbox, anchor='nw'))
+
+    checkbox_area.config(scrollregion=checkbox_area.bbox('all'))  # Configurar la región de desplazamiento del área de checkbox para que incluya todos los checkbox
+
+    search_var.trace("w", lambda *args: update_checkboxes(search_var, options, variables, checkboxes, checkbox_area))
+
+    submit_button = ctk.CTkButton(dialog, text="Submit", command=lambda: var.set(", ".join([option for option, selected in zip(options, variables) if selected.get()])))
+    submit_button.pack()
+
+
+# Obtener los tratamientos de la base de datos
+def get_treatments(cursor):
+    cursor.execute("SELECT nombre FROM tratamientos")
+    return [row[0] for row in cursor.fetchall()]
+
 
 # Generar el reporte
 def generate_report(entries):
@@ -148,12 +215,21 @@ y = (screen_height // 2) - (window_height // 2)
 window.geometry(f"+{x}+{y}")
 
 # Crear las etiquetas y las entradas de datos
+conexion = get_database_connection()
+cursor = get_database_cursor(conexion)
+treatments = get_treatments(cursor)
 for index, label_text in enumerate(labels):
     label = ctk.CTkLabel(window, text=label_text, width=20)
     label.grid(row=index, column=0, padx=10, pady=5)
-    entry = DateEntry(window, date_pattern='dd-mm-yyyy',height=20, width=40) if label_text == "Próxima Cita:" else ctk.CTkEntry(window, width=200)
-    entry.grid(row=index, column=1, padx=10, pady=5)
-    entries.append(entry)
+    if label_text == "Tratamiento:":
+        var = tk.StringVar()
+        button = tk.Button(window, text="Seleccionar Tratamientos", command=lambda: show_multi_select_dialog(window, treatments, var))
+        button.grid(row=index, column=1, padx=10, pady=5)
+        entries.append(var)
+    else:
+        entry = DateEntry(window, date_pattern='dd-mm-yyyy',height=20, width=40) if label_text == "Próxima Cita:" else ctk.CTkEntry(window, width=200)
+        entry.grid(row=index, column=1, padx=10, pady=5)
+        entries.append(entry)
 
 # Crear el botón para generar el reporte
 generate_button = ctk.CTkButton(window, text="Generar Reporte", command=lambda: generate_report(entries))
