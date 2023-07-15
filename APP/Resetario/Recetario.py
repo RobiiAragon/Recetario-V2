@@ -5,10 +5,12 @@ import tkinter as tk
 from tkinter import ttk
 import customtkinter as ctk
 from tkinter import filedialog
+from customtkinter import CTkScrollbar
 from openpyxl.drawing.image import Image
 import mysql.connector
 from tkcalendar import DateEntry
 from tkinter import Toplevel  # Importar Toplevel
+
 
 
 # Conexión a la base de datos
@@ -53,7 +55,7 @@ def ask_questions(entries):
 # Guardar datos en la base de datos
 def save_to_database(cursor, conexion, data):
     # Insertar los datos en la base de datos
-    query = "INSERT INTO recetas (fecha, nombre, edad, temp, ta, peso, fc, talla, fr, circun_abdom, id, alergias, tratamiento, indicaciones_generales, proxima_cita) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    query = "INSERT INTO recetas (fecha, nombre, edad, temp, ta, peso, fc, talla, fr, circun_abdom, id, alergias, tratamiento, Instruccion1, Tratamiento2, Instruccion2, Tratamiento3, Instruccion3, Tratamiento4, Instruccion4, indicaciones_generales, proxima_cita) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
     data_with_date = (get_current_date(),) + \
         data  # Agregar la fecha a los datos
     cursor.execute(query, data_with_date)
@@ -83,17 +85,31 @@ def fill_data_into_template(template, data):
     sheet["G12"] = data[7]
     sheet["G40"] = data[7]
     sheet["L14"] = data[8]
-    sheet["K42"] = data[8]
+    sheet["L42"] = data[8]
     sheet["G16"] = data[9]
     sheet["G44"] = data[9]
-    sheet["H18"] = data[10]
-    sheet["H46"] = data[10]
+    sheet["I18"] = data[10]
+    sheet["O48"] = data[10]
     sheet["Y8"] = data[11]
     sheet["Y36"] = data[11]
-    sheet["O21"] = data[12]
-    sheet["O48"] = data[12]
-    sheet["AF27"] = data[13]
-    sheet["AF55"] = data[13]
+    sheet["Y10"] = data[12]
+    sheet["Y38"] = data[12]
+    sheet["Y14"] = data[13]
+    sheet["Y42"] = data[13]
+    sheet["Y15"] = data[14]
+    sheet["Y44"] = data[14]
+    sheet["Y19"] = data[15]
+    sheet["Y47"] = data[15]
+    sheet["Y21"] = data[16]
+    sheet["Y48"] = data[16]
+    sheet["Y24"] = data[17]
+    sheet["Y51"] = data[17]
+    sheet["Y25"] = data[18]
+    sheet["Y52"] = data[18]
+    sheet["E22"] = data[19]
+    sheet["E49"] = data[19]
+    sheet["AF27"] = data[20]
+    sheet["AF55"] = data[20]
     return template
 
 
@@ -146,7 +162,10 @@ def show_multi_select_dialog(master, options, var):
     frame = tk.Frame(dialog)  # Crear un marco para el scrollbar y los checkbox
     frame.pack()
 
-    scrollbar = tk.Scrollbar(frame)  # Crear el scrollbar
+    # scrollbar = tk.Scrollbar(frame)  # Crear el scrollbar -- remover esta línea
+
+    # Crear el CTkScrollbarf
+    scrollbar = CTkScrollbar(frame, command=None)
     scrollbar.pack(side="right", fill="y")
 
     checkbox_area = tk.Canvas(frame, yscrollcommand=scrollbar.set)  # Crear el área de checkbox y conectarla al scrollbar
@@ -168,7 +187,6 @@ def show_multi_select_dialog(master, options, var):
 
     submit_button = ctk.CTkButton(dialog, text="Submit", command=lambda: var.set(", ".join([option for option, selected in zip(options, variables) if selected.get()])))
     submit_button.pack()
-
 
 # Obtener los tratamientos de la base de datos
 def get_treatments(cursor):
@@ -193,12 +211,12 @@ def generate_report(entries):
 # Crear y configurar la ventana
 window = ctk.CTk()
 window.title("Generador de Recetas Médicas")
-window.geometry("410x590")
+window.geometry("400x590")
 window.configure(background='#242324')
 
 labels = [
     "Nombre:", "Edad:", "Temp:", "T.A.", "Peso:", "F.C.", "Talla:", "F.R.",
-    "Circun. Abdom.", "I.D:", "Alergias:", "Tratamiento:", "Indicaciones Generales:",
+    "Circun. Abdom.", "I.D:", "Alergias:", "Tratamiento 1:", "Tratamiento 2:", "Tratamiento 3:", "Tratamiento 4:", "Indicaciones Generales:",
     "Próxima Cita:"
 ]
 
@@ -218,18 +236,33 @@ window.geometry(f"+{x}+{y}")
 conexion = get_database_connection()
 cursor = get_database_cursor(conexion)
 treatments = get_treatments(cursor)
+
 for index, label_text in enumerate(labels):
     label = ctk.CTkLabel(window, text=label_text, width=20)
     label.grid(row=index, column=0, padx=10, pady=5)
-    if label_text == "Tratamiento:":
+
+    if label_text in ["Tratamiento 1:", "Tratamiento 2:", "Tratamiento 3:", "Tratamiento 4:"]:
         var = tk.StringVar()
-        button = tk.Button(window, text="Seleccionar Tratamientos", command=lambda: show_multi_select_dialog(window, treatments, var))
-        button.grid(row=index, column=1, padx=10, pady=5)
+
+        # Crea un frame para el combobox y la entrada de descripción
+        treatment_frame = tk.Frame(window)
+        treatment_frame.grid(row=index, column=1, padx=10, pady=5)
+
+        # Combobox para seleccionar tratamientos
+        combobox = ctk.CTkComboBox(treatment_frame, values=treatments, variable=var)
+        combobox.pack(side="left")
+
+        # Entrada para la descripción del tratamiento
+        description_entry = ctk.CTkEntry(treatment_frame, width=100)
+        description_entry.pack(side="left")
         entries.append(var)
+        entries.append(description_entry)  # Añade la entrada de descripción a las entradas
+
     else:
         entry = DateEntry(window, date_pattern='dd-mm-yyyy',height=20, width=40) if label_text == "Próxima Cita:" else ctk.CTkEntry(window, width=200)
         entry.grid(row=index, column=1, padx=10, pady=5)
         entries.append(entry)
+
 
 # Crear el botón para generar el reporte
 generate_button = ctk.CTkButton(window, text="Generar Reporte", command=lambda: generate_report(entries))

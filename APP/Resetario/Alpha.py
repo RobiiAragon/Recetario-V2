@@ -193,7 +193,7 @@ def generate_report(entries):
 # Crear y configurar la ventana
 window = ctk.CTk()
 window.title("Generador de Recetas Médicas")
-window.geometry("410x590")
+window.geometry("400x590")
 window.configure(background='#242324')
 
 labels = [
@@ -218,14 +218,27 @@ window.geometry(f"+{x}+{y}")
 conexion = get_database_connection()
 cursor = get_database_cursor(conexion)
 treatments = get_treatments(cursor)
+
 for index, label_text in enumerate(labels):
     label = ctk.CTkLabel(window, text=label_text, width=20)
     label.grid(row=index, column=0, padx=10, pady=5)
+
     if label_text == "Tratamiento:":
         var = tk.StringVar()
-        button = tk.Button(window, text="Seleccionar Tratamientos", command=lambda: show_multi_select_dialog(window, treatments, var))
-        button.grid(row=index, column=1, padx=10, pady=5)
+
+        # Crea un frame para el botón y la entrada de descripción
+        treatment_frame = tk.Frame(window)
+        treatment_frame.grid(row=index, column=1, padx=10, pady=5)
+
+        # Botón para seleccionar tratamientos
+        button = tk.Button(treatment_frame, text="Seleccionar Tratamientos", command=lambda: show_multi_select_dialog(window, treatments, var))
+        button.pack(side="left")
+
+        # Entrada para la descripción del tratamiento
+        description_entry = ctk.CTkEntry(treatment_frame, width=100)
+        description_entry.pack(side="left")
         entries.append(var)
+        entries.append(description_entry)  # Añade la entrada de descripción a las entradas
     else:
         entry = DateEntry(window, date_pattern='dd-mm-yyyy',height=20, width=40) if label_text == "Próxima Cita:" else ctk.CTkEntry(window, width=200)
         entry.grid(row=index, column=1, padx=10, pady=5)
