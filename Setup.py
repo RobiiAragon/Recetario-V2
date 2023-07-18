@@ -2,6 +2,11 @@ import subprocess
 import customtkinter as ctk
 import mysql.connector
 from tkinter import messagebox
+import os
+
+# Crear la carpeta "ARCHIVO" si no existe
+if not os.path.exists("ARCHIVO"):
+    os.makedirs("ARCHIVO")
 
 # Modes: system (default), light, dark
 ctk.set_appearance_mode("dark")

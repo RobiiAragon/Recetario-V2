@@ -125,9 +125,6 @@ def print_success_message_and_open_folder(folder):
     print("La receta modificada se ha guardado en la carpeta", folder)
     os.startfile(folder)
 
-import tkinter as tk
-import customtkinter as ctk
-
 def update_checkboxes(search_var, options, variables, checkboxes, checkbox_area):
     search_text = search_var.get().lower()
     for checkbox, option, variable in zip(checkboxes, options, variables):
@@ -211,7 +208,7 @@ def generate_report(entries):
 # Crear y configurar la ventana
 window = ctk.CTk()
 window.title("Generador de Recetas Médicas")
-window.geometry("400x590")
+window.geometry("430x690")
 window.configure(background='#242324')
 
 labels = [

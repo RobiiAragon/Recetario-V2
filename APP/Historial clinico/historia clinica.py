@@ -187,7 +187,7 @@ def hacer_preguntas():
 window = ctk.CTk()
 window.title("Generador de Historiales clinicos")
 window.geometry("350x850")
-window.iconbitmap('ico.ico')
+window.iconbitmap('APP/ico.ico')
 
 # Crear un contenedor Frame para alojar los widgets
 content = tk.Frame(window)
