@@ -12,7 +12,6 @@ from tkcalendar import DateEntry
 from tkinter import Toplevel  # Importar Toplevel
 
 
-
 # Conexión a la base de datos
 def get_database_connection():
     return mysql.connector.connect(
@@ -125,6 +124,7 @@ def print_success_message_and_open_folder(folder):
     print("La receta modificada se ha guardado en la carpeta", folder)
     os.startfile(folder)
 
+
 def update_checkboxes(search_var, options, variables, checkboxes, checkbox_area):
     search_text = search_var.get().lower()
     for checkbox, option, variable in zip(checkboxes, options, variables):
@@ -140,6 +140,7 @@ def update_checkboxes(search_var, options, variables, checkboxes, checkbox_area)
             checkboxes.append(checkbox_area.create_window(0, y*30, window=checkbox, anchor='nw'))
             y += 1
     checkbox_area.config(scrollregion=checkbox_area.bbox('all'))
+
 
 def show_multi_select_dialog(master, options, var):
     dialog = tk.Toplevel(master)
@@ -185,6 +186,7 @@ def show_multi_select_dialog(master, options, var):
     submit_button = ctk.CTkButton(dialog, text="Submit", command=lambda: var.set(", ".join([option for option, selected in zip(options, variables) if selected.get()])))
     submit_button.pack()
 
+
 # Obtener los tratamientos de la base de datos
 def get_treatments(cursor):
     cursor.execute("SELECT nombre FROM tratamientos")
@@ -225,7 +227,7 @@ screen_width = window.winfo_screenwidth()
 screen_height = window.winfo_screenheight()
 window_width = window.winfo_width()
 window_height = window.winfo_height()
-x = (screen_width // 5) - (window_width // 5)
+x = (screen_width // 2) - (window_width // 2)
 y = (screen_height // 2) - (window_height // 2)
 window.geometry(f"+{x}+{y}")
 
@@ -256,7 +258,7 @@ for index, label_text in enumerate(labels):
         entries.append(description_entry)  # Añade la entrada de descripción a las entradas
 
     else:
-        entry = DateEntry(window, date_pattern='dd-mm-yyyy',height=20, width=40) if label_text == "Próxima Cita:" else ctk.CTkEntry(window, width=200)
+        entry = DateEntry(window, date_pattern='dd-mm-yyyy', height=20, width=40) if label_text == "Próxima Cita:" else ctk.CTkEntry(window, width=200)
         entry.grid(row=index, column=1, padx=10, pady=5)
         entries.append(entry)
 

@@ -52,7 +52,7 @@ def iniciar_sesion():
     root = ctk.CTk()
     root.title("AME - Inicio de Sesión")
     root.geometry("300x200")  # Cambia las dimensiones según tus necesidades
-    root.iconbitmap('ico.ico')
+    root.iconbitmap('APP/ico.ico')
 
     label_usuario = ctk.CTkLabel(root, text="Nombre de usuario:")
     label_usuario.grid(row=0, column=0, padx=10, pady=10)

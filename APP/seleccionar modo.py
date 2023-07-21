@@ -37,15 +37,20 @@ def Crear_receta():
 
 
 def certificado_medico():
-    # Crear la carpeta "certificados medicos" si no existe
-    if not os.path.exists("certificados medicos"):
-        os.makedirs("certificados medicos")
+    # Verificar si la carpeta "ARCHIVO" existe
+    if os.path.exists("ARCHIVO"):
+        # Crear la carpeta "certificados medicos" dentro de "ARCHIVO" si no existe
+        carpeta_certificados = os.path.join("ARCHIVO", "CERTIFICADOS MEDICOS")
+        if not os.path.exists(carpeta_certificados):
+            os.makedirs(carpeta_certificados)
+    else:
+        print("La carpeta 'ARCHIVO' no existe.")
 
     # Obtener la fecha actual
     fecha_actual = datetime.datetime.now().strftime("%Y-%m-%d")
 
     # Crear la carpeta con la fecha actual si no existe
-    carpeta_fecha_actual = os.path.join("certificados medicos", fecha_actual)
+    carpeta_fecha_actual = os.path.join(carpeta_certificados, fecha_actual)
     if not os.path.exists(carpeta_fecha_actual):
         os.makedirs(carpeta_fecha_actual)
 
@@ -56,7 +61,7 @@ def certificado_medico():
     nombre_archivo = f"{hora_actual}.pdf"
 
     # Ruta completa de la plantilla PDF y del archivo a pegar
-    ruta_plantilla = "plantilla.pdf"
+    ruta_plantilla = "PLANTILLAS/PDF/CertificadoMedico.pdf"
     ruta_destino = os.path.join(carpeta_fecha_actual, nombre_archivo)
 
     # Copiar y pegar el archivo PDF en la carpeta correspondiente
@@ -65,8 +70,6 @@ def certificado_medico():
     # Ejecutar el archivo PDF con Adobe Acrobat Reader en Windows
     subprocess.run(["start", "C:\Program Files\Adobe\Acrobat DC\Acrobat\Acrobat.exe", ruta_destino], shell=True)
 
-    # Copiar y pegar el archivo PDF en la carpeta correspondiente
-    shutil.copyfile(ruta_plantilla, ruta_destino)
 
 
 def notadeevolucion():
