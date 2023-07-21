@@ -200,7 +200,7 @@ def generate_report(entries):
     conexion = get_database_connection()
     cursor = get_database_cursor(conexion)
     save_to_database(cursor, conexion, data)
-    template = openpyxl.load_workbook("PLANTILLAS XLSX/receta.xlsx")
+    template = openpyxl.load_workbook("PLANTILLAS/XLSX/receta.xlsx")
     modified_template = fill_data_into_template(template, data)
     modified_recipe_path = save_modified_template(
         modified_template, folder, data[0])
