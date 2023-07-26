@@ -1,0 +1,17 @@
+Nombre:: jesus
+Edad:: 20
+Temp:: 90
+T.A.: 90
+F.C.: 90
+F.R.: 90
+I.D: 90
+Peso:: 90
+Talla:: 90
+Circun. Abdom.: 90
+Alergias:: 90
+Tratamiento 1:: ACIDO FOLICO TABLETAS
+Tratamiento 2:: 90
+Tratamiento 3::  
+Tratamiento 4::  
+Indicaciones Generales::  
+Próxima Cita::  
