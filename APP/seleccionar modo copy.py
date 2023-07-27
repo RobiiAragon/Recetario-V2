@@ -1,3 +1,4 @@
+
 import subprocess
 import webbrowser
 import customtkinter as ctk
@@ -32,41 +33,8 @@ def abrir_ruta_hoja_referencia():
     subprocess.run(["explorer", ruta])
 
 def Crear_receta():
-    # Verificar si la carpeta "ARCHIVO" existe
-    if os.path.exists("ARCHIVO"):
-        # Crear la carpeta "RECETAS" dentro de "ARCHIVO" si no existe
-        carpeta_recetas = os.path.join("ARCHIVO", "RECETAS")
-        if not os.path.exists(carpeta_recetas):
-            os.makedirs(carpeta_recetas)
-    else:
-        print("La carpeta 'ARCHIVO' no existe.")
-
-    # Obtener la fecha actual
-    fecha_actual = datetime.datetime.now().strftime("%Y-%m-%d")
-
-    # Crear la carpeta con la fecha actual si no existe
-    carpeta_fecha_actual = os.path.join(carpeta_recetas, fecha_actual)
-    if not os.path.exists(carpeta_fecha_actual):
-        os.makedirs(carpeta_fecha_actual)
-
-    # Obtener la hora y el minuto actual
-    hora_actual = datetime.datetime.now().strftime("%H-%M")
-
-    # Nombre del archivo PDF a pegar
-    nombre_archivo = f"{hora_actual}.pdf"
-
-    # Ruta completa de la plantilla PDF y del archivo a pegar
-    ruta_plantilla = "PLANTILLAS/PDF/receta.pdf"
-    ruta_destino = os.path.join(carpeta_fecha_actual, nombre_archivo)
-
-    # Copiar y pegar el archivo PDF en la carpeta correspondiente
-    shutil.copyfile(ruta_plantilla, ruta_destino)
-
-    # Ejecutar el archivo PDF con Adobe Acrobat Reader en Windows
-    subprocess.run(["start", "C:\Program Files\Adobe\Acrobat DC\Acrobat\Acrobat.exe", ruta_destino], shell=True)
-
-    # Añadido: Ejecutar demo.py
-    subprocess.call(["python", "APP/BuscadorBD/demo.py"])
+    # Llamada al script recetario.py usando subprocess
+    subprocess.call(["python", "APP/Resetario/Recetario.py"])
 
 
 def certificado_medico():

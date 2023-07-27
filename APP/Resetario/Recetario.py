@@ -1,5 +1,7 @@
 import os
 import datetime
+import shutil
+import webbrowser
 import tkinter as tk
 from tkinter import ttk
 from datetime import date
@@ -10,6 +12,43 @@ import mysql.connector
 from tkcalendar import DateEntry
 from tkinter import Toplevel
 from babel.dates import format_date, format_datetime, format_time
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+import pdfrw
+from pdfrw import PdfReader, PdfWriter, IndirectPdfDict
+
+from pdfrw import PdfReader, PdfWriter, IndirectPdfDict
+
+def fill_pdf(input_pdf_path, output_pdf_path, data_dict):
+    template_pdf = PdfReader(input_pdf_path)
+    for page in template_pdf.pages:
+        annotations = page['/Annots']
+        for annotation in annotations:
+            if annotation['/Subtype'] == '/Widget':
+                if annotation['/T']:
+                    key = annotation['/T'][1:-1]  # remove brackets around the field name
+                    if key in data_dict:
+                        annotation.update(
+                            pdfrw.IndirectPdfDict(V='{}'.format(data_dict[key]))
+                        )
+    PdfWriter().write(output_pdf_path, template_pdf)
+
+def copy_and_rename_pdf_template(folder, data):
+    # Ruta de la plantilla de PDF
+    pdf_template_path = 'PLANTILLAS/PDF/receta.pdf'
+
+    # Obteniendo la fecha actual y el nombre del paciente para el nuevo nombre del archivo
+    current_date = get_current_date()
+    patient_name = data[1].replace(' ', '_')  # Suponiendo que "Nombre del Paciente:" es la segunda etiqueta
+
+    # Creando la ruta del nuevo archivo PDF
+    new_pdf_path = os.path.join(folder, f"Receta_{patient_name}_{current_date}.pdf")
+
+    # Copiando la plantilla a la nueva ruta con el nuevo nombre
+    shutil.copy(pdf_template_path, new_pdf_path)
+
+    return new_pdf_path
 
 # Connection to the database
 def get_database_connection():
@@ -84,7 +123,15 @@ def generate_report(entries):
     cursor = get_database_cursor(connection)
     save_to_database(cursor, connection, data)
     save_data_to_text_file(folder, data)
+    
+    # Copia y renombra la plantilla del PDF y obtén la ruta
+    new_pdf_path = copy_and_rename_pdf_template(folder, data)
+    
+    # Abre el nuevo archivo PDF en el navegador predeterminado
+    webbrowser.open_new(new_pdf_path)
+    
     print_success_message_and_open_folder(folder)
+    return new_pdf_path
 
 def save_data_to_text_file(folder, data):
     # Create text file path
@@ -234,9 +281,9 @@ for index, label_text in enumerate(labels):
 
 # Crear botón para generar reporte
 generate_report_button = ttk.Button(scrollable_frame, text="Generar Reporte", command=lambda: generate_report(entries))
-generate_report_button.grid(row=len(labels), column=0, columnspan=2, padx=10, pady=10)
+generate_report_button.grid(row=len(labels), column=0, padx=10, pady=10, columnspan=2)
+
 
 canvas.pack(side="left", fill="both", expand=True)
 scrollbar.pack(side="right", fill="y")
-
 window.mainloop()

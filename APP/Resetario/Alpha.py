@@ -214,3 +214,6 @@ generate_button = ctk.CTkButton(window, text="Generar Reporte", command=lambda: 
 generate_button.grid(row=len(labels), columnspan=2, padx=10, pady=10)
 
 window.mainloop()
+
+
+
