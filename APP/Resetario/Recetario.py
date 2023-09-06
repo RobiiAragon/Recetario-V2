@@ -225,7 +225,7 @@ class AutocompleteEntry(ttk.Entry):
     
 # Crear y configurar la ventana
 window = ThemedTk(theme="calm")  # Seleccionar un tema que te guste
-window.title("Recetario AME")  # Cambiar a tu título preferido
+window.title("Recetario")  # Cambiar a tu título preferido
 window.geometry("530x500")
 
 # Agregando padding y estilo a los widgets
